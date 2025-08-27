@@ -1,0 +1,53 @@
+# backend directory gitignore
+
+/backend/.env
+/backend/myenv
+/backend/chroma_store
+/backend/uploads
+
+# frontend-rag directory gitignore
+
+# dependencies
+/frontend-rag/node_modules
+/frontend-rag/.pnp
+/frontend-rag.pnp.js
+
+# testing
+/frontend-rag/coverage
+
+# database
+/frontend-rag/prisma/db.sqlite
+/frontend-rag/prisma/db.sqlite-journal
+/frontend-rag/db.sqlite
+
+# next.js
+/frontend-rag/.next/
+/frontend-rag/out/
+next-env.d.ts
+
+# production
+/frontend-rag/build
+
+# misc
+/frontend-rag/.DS_Store
+/frontend-rag/*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+# do not commit any .env files to git, except for the .env.example file. https://create.t3.gg/en/usage/env-variables#using-environment-variables
+/frontend-rag/.env
+/frontend-rag/.env*.local
+
+# vercel
+/frontend-rag/.vercel
+
+# typescript
+/frontend-rag/*.tsbuildinfo
+
+# idea files
+/frontend-rag/.idea

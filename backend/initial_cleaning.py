@@ -30,14 +30,3 @@ class BookIngestor:
         raw = self.extract_text()
         clean = self.clean_text(raw)
         return clean
-
-
-if __name__ == "__main__":
-    data_source_name = "gullivers-travels"
-    ingestor = BookIngestor(f"{data_source_name}.pdf")
-    book_text = ingestor.process_book()
-    
-    with open("data_cleaned.txt", "w", encoding="utf-8") as f:
-        f.write(book_text)
-
-    print(f"Book processed and saved to data_cleaned.txt")

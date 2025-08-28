@@ -18,16 +18,3 @@ class Chunker:
                 "metadata": {**(metadata or {}), "chunk_id": i}
             })
         return chunked_docs
-
-
-if __name__ == "__main__":
-    with open("data_cleaned.txt", "r", encoding="utf-8") as f:
-        text = f.read()
-
-    chunker = Chunker(chunk_size=500, chunk_overlap=100)
-    docs = chunker.chunk_text(text)
-
-    with open("chunks.json", "w", encoding="utf-8") as f:
-        json.dump(docs, f, ensure_ascii=False, indent=2)
-
-    print(f"Data split into {len(docs)} chunks, saved to chunks.json")

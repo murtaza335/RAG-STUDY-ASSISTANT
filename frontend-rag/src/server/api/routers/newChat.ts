@@ -45,7 +45,7 @@ export const newChatRouter = createTRPCRouter({
   }))
   .mutation(async ({ input }) => {
     const { question, fileName } = input;
-    const response = await fetch(`${process.env.API_BASE_URL}/api/askLLM`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/askLLM`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

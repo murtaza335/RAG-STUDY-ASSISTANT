@@ -9,7 +9,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 
-async def createAndStoreEmbeddings(filePath: str, embedding_model: str="BAAI/bge-small-en-v1.5"):
+async def createAndStoreEmbeddings(filePath: str, embedding_model: str="models\\bge-small-en-v1.5"):
     # --- 1. Load PDF into LangChain Documents ---
     loader = PyMuPDFLoader(filePath)
     documents = loader.load()
@@ -40,7 +40,7 @@ async def createAndStoreEmbeddings(filePath: str, embedding_model: str="BAAI/bge
     return vectorstore
 
 
-async def queryVectorStore(filePath: str, question: str, embedding_model: str="BAAI/bge-small-en-v1.5"):
+async def queryVectorStore(filePath: str, question: str, embedding_model: str="models\\bge-small-en-v1.5"):
     # --- Reload saved vectorstore ---
     persist_directory = f"./chroma_store/{filePath}"
     embeddings = HuggingFaceEmbeddings(model_name=embedding_model)

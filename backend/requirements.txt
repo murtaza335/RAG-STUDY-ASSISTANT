@@ -1,1 +1,11 @@
-pip install fastapi[standard] google-generativeai
+fastapi[standard]
+google-generativeai
+PyPDF2
+langchain
+langchain-community
+langchain-huggingface
+pymupdf
+chromadb
+langchain-chromadb
+sentence-transformers
+rank_bm25

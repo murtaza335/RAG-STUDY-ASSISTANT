@@ -51,3 +51,6 @@ yarn-error.log*
 
 # idea files
 /frontend-rag/.idea
+
+models
+__pycache__

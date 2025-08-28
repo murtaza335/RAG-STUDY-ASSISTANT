@@ -1,7 +1,8 @@
-from langchain_community.document_loaders import PyMuPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_core.documents import Document
+from pathlib import Path
+
 
 _EMBEDDINGS = None
 _EMBEDDINGS_MODEL_NAME = None
@@ -16,11 +17,11 @@ def get_embeddings(model_name: str = "models\\bge-small-en-v1.5"):
 
 from initial_cleaning import BookIngestor
 from chunking import Chunker
-from langchain_core.documents import Document
+from store_embeddings import EmbeddingStore
 # import json
 
 
-async def createAndStoreEmbeddings(filePath: str, embedding_model: str="models\\bge-small-en-v1.5"):
+async def createAndStoreEmbeddings(filePath: str, embedding_model: str="models\\bge-small-en-v1.5", persist_directory: str = "./chroma_store"):
 
     # ============ Initial Document Cleaning ==========================
     ingestor = BookIngestor(filePath)
@@ -43,32 +44,27 @@ async def createAndStoreEmbeddings(filePath: str, embedding_model: str="models\\
 
     # =================================================================
 
+    # ============ Store in ChromaDB ==================================
     embeddings = get_embeddings(embedding_model)
 
-    persist_directory = f"./chroma_store/{filePath}"
-    vectorstore = Chroma.from_documents(
-        documents=documents,
-        embedding=embeddings,
-        persist_directory=persist_directory
-    )
+    file_stem = Path(filePath).stem
+    store = EmbeddingStore(persist_directory=persist_directory)
+    persist_dir = store.store_documents(documents, embeddings, db_name=file_stem)
 
-    vectorstore.persist()
-    print(f"Saved {len(documents)} chunks into ChromaDB at '{persist_directory}'")
-
-    return vectorstore
+    return persist_dir
+    # =================================================================
 
 
-async def queryVectorStore(filePath: str, question: str, embedding_model: str="models\\bge-small-en-v1.5"):
-    # --- Reload saved vectorstore ---
-    persist_directory = f"./chroma_store/{filePath}"
+
+async def queryVectorStore(file_path: str, question: str, embedding_model: str = "models/bge-small-en-v1.5", persist_directory: str = "./chroma_store"):
     embeddings = get_embeddings(embedding_model)
+    file_stem = Path(file_path).stem
+    persist_dir = Path(persist_directory) / file_stem
 
     vectorstore = Chroma(
-        persist_directory=persist_directory,
+        persist_directory=str(persist_dir),
         embedding_function=embeddings
     )
 
-    # --- Query your DB ---
     results = vectorstore.similarity_search(question, k=10)
-
     return results

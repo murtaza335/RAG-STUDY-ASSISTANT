@@ -7,3 +7,4 @@ langchain-huggingface
 pymupdf
 chromadb 
 sentence-transformers
+rank_bm25

@@ -2,6 +2,8 @@ from langchain_community.vectorstores import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 from pathlib import Path
+from langchain_community.retrievers import BM25Retriever
+from langchain.schema import Document
 
 
 _EMBEDDINGS = None
@@ -56,8 +58,11 @@ async def createAndStoreEmbeddings(filePath: str, embedding_model: str="models\\
 
 
 
-async def queryVectorStore(file_path: str, question: str, embedding_model: str = "models/bge-small-en-v1.5", persist_directory: str = "./chroma_store"):
+async def queryVectorStore(file_path: str, question: str, embedding_model: str = "models//bge-small-en-v1.5", persist_directory: str = "./chroma_store"):
+
     embeddings = get_embeddings(embedding_model)
+
+
     file_stem = Path(file_path).stem
     persist_dir = Path(persist_directory) / file_stem
 
@@ -66,5 +71,21 @@ async def queryVectorStore(file_path: str, question: str, embedding_model: str =
         embedding_function=embeddings
     )
 
-    results = vectorstore.similarity_search(question, k=10)
-    return results
+    semantic_retriever = vectorstore.as_retriever(search_kwargs={"k": 6})  # semantic focus
+    docs = vectorstore.get()  # get all docs from store
+    
+    # Create Document objects from the Chroma response structure
+    documents = []
+    if docs["documents"] and docs["metadatas"]:
+        for i, doc_content in enumerate(docs["documents"]):
+            metadata = docs["metadatas"][i] if i < len(docs["metadatas"]) else {}
+            documents.append(Document(page_content=doc_content, metadata=metadata))
+    
+    keyword_retriever = BM25Retriever.from_documents(documents)
+
+    semantic_results = semantic_retriever.get_relevant_documents(question)
+    keyword_results = keyword_retriever.get_relevant_documents(question)
+
+    combined_results = semantic_results[:5] + keyword_results[:3]  
+
+    return combined_results

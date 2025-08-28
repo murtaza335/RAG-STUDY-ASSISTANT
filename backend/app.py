@@ -11,6 +11,9 @@ app = FastAPI()
 
 load_dotenv()
 
+LLM_API = os.environ["GEMINI_API_KEY"]
+EMBEDDING_MODEL = os.environ["EMBEDDING_MODEL"]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],  # or ["*"] during dev
@@ -20,7 +23,7 @@ app.add_middleware(
 )
 
 # configuring genai
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+genai.configure(api_key=LLM_API)
 model = genai.GenerativeModel("gemini-2.0-flash")
 
 UPLOAD_DIR = 'uploads'
@@ -42,7 +45,7 @@ async def upload_file(file: UploadFile = File(...)):
     print(f"File {file.filename} saved successfully.")
 
     # call the embeddings function
-    await createAndStoreEmbeddings(f"{UPLOAD_DIR}/{file.filename}")
+    await createAndStoreEmbeddings(f"{UPLOAD_DIR}/{file.filename}", EMBEDDING_MODEL)
     
 
     return {"success" : True, "message": f"File {file.filename} uploaded successfully."}
@@ -52,7 +55,7 @@ async def upload_file(file: UploadFile = File(...)):
 @app.post("/api/queryFile")
 async def query_file(request: QueryRequest):
     filePath = os.path.join(UPLOAD_DIR, request.fileName)
-    results = await queryVectorStore(filePath, request.question)
+    results = await queryVectorStore(filePath, request.question, EMBEDDING_MODEL)
     return {
         "success": True,
         "message": "Query executed successfully",

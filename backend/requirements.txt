@@ -2,7 +2,8 @@ fastapi[standard]
 google-generativeai
 PyPDF2
 langchain
-langchain-community 
+langchain-community
+langchain-huggingface
 pymupdf
 chromadb 
 sentence-transformers

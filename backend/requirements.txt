@@ -5,6 +5,7 @@ langchain
 langchain-community
 langchain-huggingface
 pymupdf
-chromadb 
+chromadb
+langchain-chromadb
 sentence-transformers
 rank_bm25
